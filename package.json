@@ -1,0 +1,35 @@
+{
+    "name": "demon-extension",
+    "repositoryName": "Demon Extension (1.0)",
+    "description": "Paperback extensions for different websites. Maintained by SamipMainali.",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "lint": "eslint --fix --cache --cache-location 'node_modules/.cache/eslint/.eslint-cache'",
+        "lint:check": "eslint --cache --cache-location 'node_modules/.cache/eslint/.eslint-cache'",
+        "format": "prettier --write '**/*{.md,.yml,.yaml,.json,.js,.ts}' --cache",
+        "format:check": "prettier --check '**/*{.md,.yml,.yaml,.json,.js,.ts}' --cache",
+        "tsc": "tsc --project tsconfig.json --noEmit",
+        "bundle": "paperback-cli bundle",
+        "serve": "paperback-cli serve",
+        "logcat": "paperback-cli logcat",
+        "dev": "paperback-cli serve --watch",
+        "test": "npm run tsc && npm run lint:check && npm run format:check && npm run bundle",
+        "prepare": "husky"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.29.0",
+        "@ianvs/prettier-plugin-sort-imports": "^4.4.2",
+        "@paperback/toolchain": "^1.0.0-alpha.53",
+        "@paperback/types": "^1.0.0-alpha.53",
+        "@types/crypto-js": "^4.2.2",
+        "@types/eslint": "^9.6.1",
+        "cheerio": "^1.1.0",
+        "crypto-js": "^4.2.0",
+        "eslint": "^9.29.0",
+        "husky": "^9.1.7",
+        "prettier": "^3.5.3",
+        "typescript": "^5.8.3",
+        "typescript-eslint": "^8.34.1"
+    }
+}
