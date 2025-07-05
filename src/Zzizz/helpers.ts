@@ -1,4 +1,4 @@
-// Helper functions for Ziz extension
+// Helper functions for Zzizz extension
 // These utilities encapsulate common parsing and transformation logic for maintainability and clarity.
 // Comments focus on intent, edge cases, and site-specific quirks for future maintainers.
 
@@ -19,7 +19,7 @@ export class ZizHelpers {
 
     /**
      * Normalizes status text to standard values for Paperback.
-     * Ziz uses 'In Release' for ongoing; update mapping if site changes.
+     * Zzizz uses 'In Release' for ongoing; update mapping if site changes.
      */
     static normalizeStatus(statusText: string): string {
         if (!statusText) return "Ongoing";
@@ -31,7 +31,7 @@ export class ZizHelpers {
     }
 
     /**
-     * Converts a rating from Ziz's 5-point scale to Paperback's decimal format.
+     * Converts a rating from Zzizz's 5-point scale to Paperback's decimal format.
      * Returns undefined if rating is missing or not a number.
      */
     static calculateRating(ratingText: string): number | undefined {
@@ -112,7 +112,7 @@ export class ZizHelpers {
     }
 
     /**
-     * Ensures a URL ends with a trailing slash (for consistency with Ziz site).
+     * Ensures a URL ends with a trailing slash (for consistency with Zzizz site).
      */
     static ensureTrailingSlash(url: string): string {
         return url.endsWith("/") ? url : `${url}/`;

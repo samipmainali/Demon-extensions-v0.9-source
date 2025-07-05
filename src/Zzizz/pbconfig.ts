@@ -1,4 +1,4 @@
-// Paperback extension configuration for Ziz
+// Paperback extension configuration for Zzizz
 import { ContentRating, SourceInfo, SourceIntents } from "@paperback/types";
 
 const getVersion = (): string => {
@@ -17,7 +17,7 @@ export const USE_POST_IDS = false;
 export const READER_API_BASE = "/api/reader/page_data/";
 
 export default {
-    name: "Ziz",
+    name: "Zzizz",
     description: "Extension that pulls content from zzizz.xyz.",
     version: getVersion(),
     icon: "icon.png",

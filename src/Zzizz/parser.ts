@@ -1,5 +1,5 @@
 // Responsible for parsing HTML responses from zzizz.xyz
-// This file contains all the logic for extracting manga, chapter, and search data from the Ziz site.
+// This file contains all the logic for extracting manga, chapter, and search data from the Zzizz site.
 // Comments focus on intent, edge cases, and site-specific quirks for future maintainers.
 
 import {
@@ -16,11 +16,12 @@ import {
 import { CheerioAPI } from "cheerio";
 import { API_ENDPOINTS, SELECTORS } from "./constants";
 import { ZizHelpers } from "./helpers";
+import { DOMAIN } from "./pbconfig";
 
 export class ZizParser {
     /**
      * Parses manga details from the details page HTML.
-     * Handles quirks of the Ziz site, such as status wording and genre structure.
+     * Handles quirks of the Zzizz site, such as status wording and genre structure.
      */
     async parseMangaDetails(
         $: CheerioAPI,
@@ -55,7 +56,7 @@ export class ZizParser {
             $(SELECTORS.MANGA.COVER).first().attr("src") || "";
         const fullImageUrl = ZizHelpers.buildFullUrl(image, source.domain);
 
-        // Status is a text field; Ziz uses 'In Release' for ongoing
+        // Status is a text field; Zzizz uses 'In Release' for ongoing
         // If the site adds new statuses, update the mapping in helpers/constants
         const statusText = $(SELECTORS.MANGA.STATUS)
             .parent()
@@ -175,7 +176,7 @@ export class ZizParser {
     }
 
     /**
-     * Parses the image URLs for a chapter using Ziz's canvas-based system.
+     * Parses the image URLs for a chapter using Zzizz's canvas-based system.
      * If the site changes to use a different system, update this logic.
      */
     async parseChapterDetails(
@@ -205,7 +206,7 @@ export class ZizParser {
                 // Construct the direct image URL for the page
                 const pageUrl = pageApiUrlBase.startsWith("http")
                     ? `${pageApiUrlBase}${pageId}/`
-                    : `https://zzizz.xyz${pageApiUrlBase}${pageId}/`;
+                    : `${DOMAIN}${pageApiUrlBase}${pageId}/`;
                 pages.push(pageUrl);
             }
         }
@@ -285,10 +286,7 @@ export class ZizParser {
                     }
                     if (!title || !href) return;
                     const mangaId = ZizHelpers.cleanMangaId(href);
-                    const fullImageUrl = ZizHelpers.buildFullUrl(
-                        image,
-                        "https://zzizz.xyz",
-                    );
+                    const fullImageUrl = ZizHelpers.buildFullUrl(image, DOMAIN);
                     items.push({
                         type: "simpleCarouselItem",
                         mangaId: mangaId,
@@ -298,9 +296,9 @@ export class ZizParser {
                     });
                 });
                 break;
-            case "latest_manhua":
-                // Parse Latest Manhua section
-                $("h2:contains('Latest Manhua')")
+            case "latest_projects":
+                // Parse Latest Projects section (formerly Latest Manhua)
+                $("h2:contains('Latest Projects')")
                     .parent()
                     .find(".grid a")
                     .each((_, obj) => {
@@ -323,7 +321,7 @@ export class ZizParser {
                         const mangaId = this.idCleaner(href);
                         const fullImageUrl = image.startsWith("http")
                             ? image
-                            : `https://zzizz.xyz${image}`;
+                            : `${DOMAIN}${image}`;
                         items.push({
                             type: "simpleCarouselItem",
                             mangaId: mangaId,
@@ -347,7 +345,7 @@ export class ZizParser {
                 // For trending sections, we need to make AJAX calls
                 const period = section.id.replace("trending_", "");
                 try {
-                    const trendingUrl = `https://zzizz.xyz/ajax/get-trending-data/?period=${period}`;
+                    const trendingUrl = `${DOMAIN}/ajax/get-trending-data/?period=${period}`;
                     const [, buffer] = await Application.scheduleRequest({
                         url: trendingUrl,
                         method: "GET",
@@ -366,7 +364,7 @@ export class ZizParser {
                         const mangaId = this.idCleaner(work.url);
                         const fullImageUrl = work.cover_url.startsWith("http")
                             ? work.cover_url
-                            : `https://zzizz.xyz${work.cover_url}`;
+                            : `${DOMAIN}${work.cover_url}`;
                         // Use last_chapter_num if available
                         let subtitle = undefined;
                         if (work.last_chapter_num) {
@@ -413,7 +411,7 @@ export class ZizParser {
                     const mangaId = this.idCleaner(href);
                     const fullImageUrl = image.startsWith("http")
                         ? image
-                        : `https://zzizz.xyz${image}`;
+                        : `${DOMAIN}${image}`;
                     items.push({
                         type: "simpleCarouselItem",
                         mangaId: mangaId,

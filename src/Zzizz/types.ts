@@ -1,4 +1,4 @@
-// Type definitions for Ziz extension
+// Type definitions for Zzizz extension
 // Provides better type safety and developer experience
 
 import { ContentRating } from "@paperback/types";

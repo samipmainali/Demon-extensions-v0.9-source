@@ -1,4 +1,4 @@
-// Ziz Extension for Paperback - interacts with zzizz.xyz
+// Zzizz Extension for Paperback - interacts with zzizz.xyz
 // This file contains the main extension logic, including search, details, chapters, and discover sections.
 // Comments focus on intent, edge cases, and maintainability for future developers.
 
@@ -68,7 +68,7 @@ class ZizExtension
 {
     // Extension metadata and configuration
     readonly domain: string = DOMAIN;
-    readonly name: string = "Ziz";
+    readonly name: string = "Zzizz";
     readonly defaultContentRating: ContentRating = DEFAULT_CONTENT_RATING;
     readonly language: string = LANGUAGE;
     readonly usePostIds: boolean = USE_POST_IDS;
@@ -172,8 +172,8 @@ class ZizExtension
                 type: DiscoverSectionType.simpleCarousel,
             },
             {
-                id: "latest_manhua",
-                title: "Latest Manhua",
+                id: "latest_projects",
+                title: "Latest Projects",
                 type: DiscoverSectionType.simpleCarousel,
             },
             {
@@ -236,7 +236,7 @@ class ZizExtension
         const genreOptions: { id: string; value: string }[] = [];
         // Reset genre mapping
         this.genreIdLabelMap = {};
-        // Parse genres from the actual Ziz website structure
+        // Parse genres from the actual Zzizz website structure
         $(
             "a[href*='genre'], .genre-filter a, .filter-genre a, a:contains('Genres')",
         ).each((_, el) => {
@@ -343,11 +343,11 @@ class ZizExtension
                 }
             }
         }
-        // Add search parameter - Ziz uses 'q' for search
+        // Add search parameter - Zzizz uses 'q' for search
         if (query.title && query.title.trim().length > 0) {
             params.push(`q=${encodeURIComponent(query.title.trim())}`);
         }
-        // Add sorting parameter - Ziz uses 'sort' for sorting
+        // Add sorting parameter - Zzizz uses 'sort' for sorting
         const validSorts = CONSTANTS.SORTING.VALID_SORTS as readonly string[];
         let orderValue = "";
         if (sortingMethod?.id) {
@@ -397,7 +397,7 @@ class ZizExtension
             });
             hasNextPage = page < maxPage;
         }
-        // Update pagination selectors based on actual Ziz website structure
+        // Update pagination selectors based on actual Zzizz website structure
         const paginationNav = $(".pagination");
         if (paginationNav.length > 0) {
             // Check for Next button
@@ -440,7 +440,7 @@ class ZizExtension
             const html = Application.arrayBufferToUTF8String(buffer);
             const $ = cheerio.load(html);
             const sortingOptions: { id: string; label: string }[] = [];
-            // Parse sorting options from the actual Ziz website structure
+            // Parse sorting options from the actual Zzizz website structure
             $(
                 "a[href*='sort'], .sort-filter a, .filter-sort a, a:contains('Sort By')",
             ).each((_, el) => {
@@ -524,4 +524,4 @@ class ZizExtension
 }
 
 // Export the extension instance
-export const Ziz = new ZizExtension();
+export const Zzizz = new ZizExtension();
