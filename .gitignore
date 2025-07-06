@@ -5,3 +5,5 @@
 /.husky
 /.vscode
 /.prettierignore
+/extensions
+/bundle-and-copy.sh
