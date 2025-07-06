@@ -253,6 +253,40 @@ export class ZizParser {
     }
 
     /**
+     * Parses trending data from JSON API response.
+     */
+    async parseTrendingData(
+        data: { works: Array<{ title: string; url: string; cover_url: string; last_chapter_num?: number }> },
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        section: DiscoverSection,
+    ): Promise<DiscoverSectionItem[]> {
+        const items: DiscoverSectionItem[] = [];
+        
+        data.works.forEach((work) => {
+            const mangaId = this.idCleaner(work.url);
+            const fullImageUrl = work.cover_url.startsWith("http")
+                ? work.cover_url
+                : `${DOMAIN}${work.cover_url}`;
+            
+            // Use last_chapter_num if available
+            let subtitle = undefined;
+            if (work.last_chapter_num) {
+                subtitle = `${work.last_chapter_num} Chapters`;
+            }
+            
+            items.push({
+                type: "simpleCarouselItem",
+                mangaId: mangaId,
+                title: Application.decodeHTMLEntities(work.title),
+                imageUrl: fullImageUrl,
+                ...(subtitle ? { subtitle } : {}),
+            });
+        });
+        
+        return items;
+    }
+
+    /**
      * Parses discover sections for the homepage (latest updates, trending, etc).
      * If the site adds new sections, add new cases here.
      */
@@ -341,51 +375,10 @@ export class ZizParser {
 
             case "trending_day":
             case "trending_week":
-            case "trending_all": {
-                // For trending sections, we need to make AJAX calls
-                const period = section.id.replace("trending_", "");
-                try {
-                    const trendingUrl = `${DOMAIN}/ajax/get-trending-data/?period=${period}`;
-                    const [, buffer] = await Application.scheduleRequest({
-                        url: trendingUrl,
-                        method: "GET",
-                    });
-                    const response =
-                        Application.arrayBufferToUTF8String(buffer);
-                    const data = JSON.parse(response) as {
-                        works: Array<{
-                            title: string;
-                            url: string;
-                            cover_url: string;
-                            last_chapter_num?: number;
-                        }>;
-                    };
-                    data.works.forEach((work) => {
-                        const mangaId = this.idCleaner(work.url);
-                        const fullImageUrl = work.cover_url.startsWith("http")
-                            ? work.cover_url
-                            : `${DOMAIN}${work.cover_url}`;
-                        // Use last_chapter_num if available
-                        let subtitle = undefined;
-                        if (work.last_chapter_num) {
-                            subtitle = `${work.last_chapter_num} Chapters`;
-                        }
-                        items.push({
-                            type: "simpleCarouselItem",
-                            mangaId: mangaId,
-                            title: Application.decodeHTMLEntities(work.title),
-                            imageUrl: fullImageUrl,
-                            ...(subtitle ? { subtitle } : {}),
-                        });
-                    });
-                } catch (error) {
-                    console.error(
-                        `Failed to fetch trending data for ${period}:`,
-                        error,
-                    );
-                }
+            case "trending_all":
+                // Trending sections are now handled directly in the main extension
+                // This case should not be reached anymore
                 break;
-            }
 
             default:
                 // Fallback to general manga items

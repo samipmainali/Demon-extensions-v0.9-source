@@ -201,22 +201,55 @@ class ZizExtension
 
     /**
      * Fetches items for a discover section (e.g., latest updates, trending).
-     * No pagination for homepage sections.
+     * Makes different requests based on section type for better performance.
      */
     async getDiscoverSectionItems(
         section: DiscoverSection,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         metadata: { page?: number } | undefined,
     ): Promise<PagedResults<DiscoverSectionItem>> {
-        const url = this.domain;
+        let url: string;
+        
+        // Use different URLs based on section type
+        switch (section.id) {
+            case "latest_updates":
+                // Latest updates are on the homepage
+                url = this.domain;
+                break;
+            case "latest_projects":
+                // Latest projects might be on a dedicated page or homepage
+                url = this.domain;
+                break;
+            case "trending_day":
+            case "trending_week":
+            case "trending_all": {
+                // Trending sections use dedicated AJAX endpoints
+                const period = section.id.replace("trending_", "");
+                url = `${this.domain}/ajax/get-trending-data/?period=${period}`;
+                break;
+            }
+            default:
+                url = this.domain;
+        }
+
         const [, buffer] = await Application.scheduleRequest({
             url,
             method: "GET",
         });
-        const $ = cheerio.load(Application.arrayBufferToUTF8String(buffer));
-        const items = await this.parser.parseDiscoverSections($, section);
-        // No pagination for homepage sections
-        return { items, metadata: undefined };
+        
+        // Handle different response formats based on section type
+        if (section.id.startsWith("trending_")) {
+            // Trending sections return JSON data
+            const response = Application.arrayBufferToUTF8String(buffer);
+            const data = JSON.parse(response) as { works: Array<{ title: string; url: string; cover_url: string; last_chapter_num?: number }> };
+            const items = await this.parser.parseTrendingData(data, section);
+            return { items, metadata: undefined };
+        } else {
+            // Other sections return HTML
+            const $ = cheerio.load(Application.arrayBufferToUTF8String(buffer));
+            const items = await this.parser.parseDiscoverSections($, section);
+            return { items, metadata: undefined };
+        }
     }
 
     /**
