@@ -1,7 +1,7 @@
 {
     "name": "demon-extension",
-    "repositoryName": "Demon Extension (1.0)",
-    "description": "Paperback extensions for different websites. Maintained by SamipMainali.",
+    "repositoryName": "Demon Extension v0.9",
+    "description": "Paperback v0.9 extensions for different websites. Maintained by SamipMainali.",
     "private": true,
     "type": "module",
     "scripts": {
